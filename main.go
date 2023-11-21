@@ -29,8 +29,12 @@ func main() {
 
 	var items []model.Item
 
-	db.Where("item_id like ?", "0%").Find(&items)
+	if err := db.Where("item_id like ?", "0%").Find(&items).Error; err != nil {
+		panic(err)
+	}
 
-	fmt.Println(items)
+	for n, item := range items {
+		fmt.Println(n, item.ItemId, item.ItemName)
+	}
 
 }
