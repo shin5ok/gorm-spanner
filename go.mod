@@ -3,6 +3,7 @@ module github.com/shin5ok/gorm-spanner
 go 1.21.3
 
 require (
+	github.com/google/uuid v1.3.1
 	github.com/googleapis/go-gorm-spanner v0.0.0-20231110090820-e5c0b8387302
 	github.com/googleapis/go-sql-spanner v1.1.2-0.20231030143945-51f013b57cce
 	gorm.io/gen v0.3.23

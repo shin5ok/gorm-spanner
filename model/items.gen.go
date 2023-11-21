@@ -4,6 +4,8 @@
 
 package model
 
+import "time"
+
 //import "gorm.io/gorm"
 
 const TableNameItem = "items"
@@ -11,6 +13,8 @@ const TableNameItem = "items"
 // Item mapped from table <items>
 type Item struct {
 	//gorm.Model
+	CreatedAt time.Time `gorm:"column:created_at;not null" json:"created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at;not null" json:"updated_at"`
 	ItemName  string `gorm:"column:item_name;not null" json:"item_name"`
 	ItemId string `gorm:"column:item_id;not null" json:"item_id"`
 	Price int    `gorm:"column:price;not null" json:"price"`
