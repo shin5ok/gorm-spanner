@@ -43,6 +43,29 @@ func main() {
 		db.Logger = db.Logger.LogMode(logger.Info)
 	}
 
+	fmt.Println("users listing ------------------")
+	var users []model.User
+
+	if err := db.Debug().Find(&users).Error; err != nil {
+		panic(err)
+	}
+
+	for n, user := range users {
+		fmt.Println(n, user.UserId, user.UserName)
+	}
+
+	fmt.Println("user_items listing ------------------")
+	var userItems []model.UserItem
+
+	if err := db.Debug().Find(&userItems).Error; err != nil {
+		panic(err)
+	}
+
+	for n, userItem := range userItems {
+		fmt.Println(n, userItem.UserId, userItem.ItemId)
+	}
+
+	fmt.Println("items listing ------------------")
 	var items []model.Item
 
 	var preparedStr string
