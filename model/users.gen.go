@@ -4,14 +4,16 @@
 
 package model
 
+import "time"
+
 const TableNameUser = "users"
 
 // User mapped from table <users>
 type User struct {
 	UserId   string `gorm:"column:user_id;primaryKey;autoIncrement:true" json:"user_id"`
 	UserName string `gorm:"column:name;not null" json:"username"`
-	CreatedAt string `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt string `gorm:"column:updated_at" json:"updated_at"`
+	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt time.Time  `gorm:"column:updated_at" json:"updated_at"`
 	Items []Item `gorm:"foreignKey:ItemId" json:"items"`
 }
 
