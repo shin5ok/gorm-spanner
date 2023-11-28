@@ -25,6 +25,7 @@ func main() {
 
 	debug := flag.Bool("debug", false, "enable debug logging")
 	prepared := flag.String("prepared", "0", "enable prepared statement")
+	migrate := flag.Bool("migrate", false, "schema migrate")
 	flag.Parse()
 
 	if *debug {
@@ -37,6 +38,14 @@ func main() {
 	)
 	if err != nil {
 		panic(err)
+	}
+
+	// not work
+	if *migrate {
+		err := db.AutoMigrate(&model.User{})
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	if *debug {

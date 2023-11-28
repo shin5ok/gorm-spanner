@@ -15,6 +15,7 @@ type User struct {
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt time.Time  `gorm:"column:updated_at" json:"updated_at"`
 	Items []Item `gorm:"foreignKey:ItemId" json:"items"`
+	//Memo string `gorm:"column;memo" json:"memo"`
 }
 
 // TableName User's table name
