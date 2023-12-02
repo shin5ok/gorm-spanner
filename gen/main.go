@@ -20,9 +20,6 @@ var (
 
 func main() {
 
-	dsnString := "projects/" + projectId + "/instances/" + instanceId + "/databases/" + databaseId
-	fmt.Println("DSN: ", dsnString)
-
 	db, _ := gorm.Open(spannergorm.New(spannergorm.Config{DriverName: "spanner", DSN: dsn}), &gorm.Config{})
 
 	g := gen.NewGenerator(gen.Config{
