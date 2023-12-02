@@ -24,7 +24,7 @@ var (
 func main() {
 
 	debug := flag.Bool("debug", false, "enable debug logging")
-	prepared := flag.String("prepared", "0", "enable prepared statement")
+	where := flag.String("where", "", "filter conditions with where like %")
 	migrate := flag.Bool("migrate", false, "schema migrate")
 	flag.Parse()
 
@@ -138,12 +138,12 @@ func main() {
 	fmt.Println("items listing ------------------")
 	var items []model.Item
 
-	var preparedStr string
-	if *prepared != "" {
-		preparedStr = fmt.Sprintf("%s%%", *prepared)
+	var whereStr string
+	if *where != "" {
+		whereStr = fmt.Sprintf("%s%%", *where)
 	}
 
-	if err := db.Where("item_id like ?", preparedStr).Find(&items).Error; err != nil {
+	if err := db.Where("item_id like ?", whereStr).Find(&items).Error; err != nil {
 		panic(err)
 	}
 
