@@ -25,7 +25,7 @@ func main() {
 
 	debug := flag.Bool("debug", false, "enable debug logging")
 	where := flag.String("where", "", "filter conditions with where like %")
-	migrate := flag.Bool("migrate", false, "schema migrate")
+	migrate := flag.Bool("migrate", false, "migrate schema")
 	flag.Parse()
 
 	if *debug {
