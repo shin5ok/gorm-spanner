@@ -15,10 +15,11 @@ import (
 )
 
 var (
-	projectId  = os.Getenv("PROJECT_ID")
-	instanceId = os.Getenv("INSTANCE_ID")
-	databaseId = os.Getenv("DATABASE_ID")
-	dsn        = fmt.Sprintf("projects/%s/instances/%s/databases/%s", projectId, instanceId, databaseId)
+	projectId    = os.Getenv("PROJECT_ID")
+	instanceId   = os.Getenv("INSTANCE_ID")
+	databaseId   = os.Getenv("DATABASE_ID")
+	dsn          = fmt.Sprintf("projects/%s/instances/%s/databases/%s", projectId, instanceId, databaseId)
+	sampleItemId = `0241e827-cc8d-4d62-b999-650e03e2ef72`
 )
 
 func main() {
@@ -40,7 +41,7 @@ func main() {
 		panic(err)
 	}
 
-	// not work
+	// will not work
 	if *migrate {
 		err := db.AutoMigrate(&model.User{})
 		if err != nil {
@@ -65,7 +66,6 @@ func main() {
 			return err
 		}
 
-		sampleItemId := `0241e827-cc8d-4d62-b999-650e03e2ef72`
 		if err := tx.Create(&model.UserItem{
 			UserId: newUser.UserId,
 			ItemId: sampleItemId,
@@ -79,7 +79,7 @@ func main() {
 	fmt.Println("users listing ------------------")
 	var users []model.User
 
-	if err := db.Debug().Find(&users).Error; err != nil {
+	if err := db.Find(&users).Error; err != nil {
 		panic(err)
 	}
 
@@ -90,7 +90,7 @@ func main() {
 	fmt.Println("user_items listing ------------------")
 	var userItems []model.UserItem
 
-	if err := db.Debug().Find(&userItems).Error; err != nil {
+	if err := db.Find(&userItems).Error; err != nil {
 		panic(err)
 	}
 
@@ -126,7 +126,7 @@ func main() {
 		model.User
 	}
 
-	db.Debug().Table("users").
+	db.Table("users").
 		Select("users.*, user_items.*").
 		Joins("inner join user_items on users.user_id = user_items.user_id").
 		Scan(&userWithItems)
@@ -161,7 +161,7 @@ func main() {
 	db.Create(&newItem)
 
 	var result *gorm.DB
-	if result = db.Debug().Where("item_name = ?", "new").Find(&items); result.Error != nil {
+	if result = db.Where("item_name = ?", "new").Find(&items); result.Error != nil {
 		panic(result.Error)
 	}
 	fmt.Println("raw affected:", result.RowsAffected)
@@ -191,7 +191,7 @@ func main() {
 		newItem.Price = 128000
 		newItem.CreatedAt = time.Now()
 
-		if err := tx.Debug().Create(&newItem).Error; err != nil {
+		if err := tx.Create(&newItem).Error; err != nil {
 			fmt.Println(err)
 			return err
 		}
