@@ -15,18 +15,17 @@ import (
 )
 
 var (
-	projectId    = os.Getenv("PROJECT_ID")
-	instanceId   = os.Getenv("INSTANCE_ID")
-	databaseId   = os.Getenv("DATABASE_ID")
-	dsn          = fmt.Sprintf("projects/%s/instances/%s/databases/%s", projectId, instanceId, databaseId)
-	sampleItemId = `0241e827-cc8d-4d62-b999-650e03e2ef72`
+	projectId  = os.Getenv("PROJECT_ID")
+	instanceId = os.Getenv("INSTANCE_ID")
+	databaseId = os.Getenv("DATABASE_ID")
+	dsn        = fmt.Sprintf("projects/%s/instances/%s/databases/%s", projectId, instanceId, databaseId)
 )
 
 func main() {
 
 	debug := flag.Bool("debug", false, "enable debug logging")
-	where := flag.String("where", "", "filter conditions with where like %")
-	migrate := flag.Bool("migrate", false, "migrate schema")
+	prepared := flag.String("prepared", "0", "enable prepared statement")
+	migrate := flag.Bool("migrate", false, "migrate model structs to schema")
 	flag.Parse()
 
 	if *debug {
@@ -41,16 +40,11 @@ func main() {
 		panic(err)
 	}
 
-	// will not work
 	if *migrate {
-		err := db.AutoMigrate(&model.User{})
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	if *debug {
-		db.Logger = db.Logger.LogMode(logger.Info)
+		db.AutoMigrate(model.User{})
+		// db.AutoMigrate(model.UserItem{}, model.User{})
+		// db.AutoMigrate(model.Item{}, model.UserItem{}, model.User{})
+		os.Exit(0)
 	}
 
 	db.Transaction(func(tx *gorm.DB) error {
@@ -66,6 +60,7 @@ func main() {
 			return err
 		}
 
+		sampleItemId := `0241e827-cc8d-4d62-b999-650e03e2ef72`
 		if err := tx.Create(&model.UserItem{
 			UserId: newUser.UserId,
 			ItemId: sampleItemId,
@@ -79,7 +74,7 @@ func main() {
 	fmt.Println("users listing ------------------")
 	var users []model.User
 
-	if err := db.Find(&users).Error; err != nil {
+	if err := db.Debug().Find(&users).Error; err != nil {
 		panic(err)
 	}
 
@@ -90,7 +85,7 @@ func main() {
 	fmt.Println("user_items listing ------------------")
 	var userItems []model.UserItem
 
-	if err := db.Find(&userItems).Error; err != nil {
+	if err := db.Debug().Find(&userItems).Error; err != nil {
 		panic(err)
 	}
 
@@ -126,7 +121,7 @@ func main() {
 		model.User
 	}
 
-	db.Table("users").
+	db.Debug().Table("users").
 		Select("users.*, user_items.*").
 		Joins("inner join user_items on users.user_id = user_items.user_id").
 		Scan(&userWithItems)
@@ -138,12 +133,12 @@ func main() {
 	fmt.Println("items listing ------------------")
 	var items []model.Item
 
-	var whereStr string
-	if *where != "" {
-		whereStr = fmt.Sprintf("%s%%", *where)
+	var preparedStr string
+	if *prepared != "" {
+		preparedStr = fmt.Sprintf("%s%%", *prepared)
 	}
 
-	if err := db.Where("item_id like ?", whereStr).Find(&items).Error; err != nil {
+	if err := db.Where("item_id like ?", preparedStr).Find(&items).Error; err != nil {
 		panic(err)
 	}
 
@@ -161,7 +156,7 @@ func main() {
 	db.Create(&newItem)
 
 	var result *gorm.DB
-	if result = db.Where("item_name = ?", "new").Find(&items); result.Error != nil {
+	if result = db.Debug().Where("item_name = ?", "new").Find(&items); result.Error != nil {
 		panic(result.Error)
 	}
 	fmt.Println("raw affected:", result.RowsAffected)
@@ -191,7 +186,7 @@ func main() {
 		newItem.Price = 128000
 		newItem.CreatedAt = time.Now()
 
-		if err := tx.Create(&newItem).Error; err != nil {
+		if err := tx.Debug().Create(&newItem).Error; err != nil {
 			fmt.Println(err)
 			return err
 		}
