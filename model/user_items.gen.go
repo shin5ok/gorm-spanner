@@ -8,9 +8,9 @@ const TableNameUserItem = "user_items"
 type UserItem struct {
 	UserId    string    `gorm:"column:user_id;primaryKey;unique;not null"`
 	ItemId    string    `gorm:"column:item_id;primaryKey;unique;not null"`
+	User      User      `gorm:"foreignKey:UserId"`
 	CreatedAt time.Time `gorm:"column:created_at;not null"`
 	UpdatedAt time.Time `gorm:"column:updated_at;not null"`
-	User      User      `gorm:"foreignKey:UserId"`
 }
 
 // TableName UserItem's table name

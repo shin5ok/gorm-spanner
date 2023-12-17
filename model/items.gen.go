@@ -13,11 +13,11 @@ const TableNameItem = "items"
 // Item mapped from table <items>
 type Item struct {
 	//gorm.Model
+	ItemId string `gorm:"column:item_id;primaryKey;not null" json:"item_id"`
+	ItemName  string `gorm:"column:item_name;not null" json:"item_name"`
+	Price int    `gorm:"column:price;not null" json:"price"`
 	CreatedAt time.Time `gorm:"column:created_at;not null" json:"created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at;not null" json:"updated_at"`
-	ItemName  string `gorm:"column:item_name;not null" json:"item_name"`
-	ItemId string `gorm:"column:item_id;not null" json:"item_id"`
-	Price int    `gorm:"column:price;not null" json:"price"`
 }
 
 // TableName Item's table name
